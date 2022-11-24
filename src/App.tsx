@@ -1,10 +1,12 @@
 import "./App.css";
+import Gnb from "@/components/GNB";
+import Wordle from "@/components/Wordle";
 
 const App = () => {
   return (
     <>
-      {/* 헤더 */}
-      {/* 바디 */}
+      <Gnb />
+      <Wordle />
     </>
   );
 };
