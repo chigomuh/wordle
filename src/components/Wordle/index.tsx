@@ -1,12 +1,10 @@
 import CardContainer from "@/components/Wordle/CardContainer";
 import { css } from "@emotion/react";
 import { Words } from "@/types";
-import { createContext, Dispatch, useState } from "react";
+import { createContext, Dispatch, useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
+import { INIT_WORDS, KEY_WORDS_ARRAY } from "@/const/wordle";
 
-const INIT_WORDS: Words = Array(6)
-  .fill("")
-  .map((_) => Array(5).fill(""));
 export const WordsContext = createContext<{
   words: Words;
   setWords: Dispatch<React.SetStateAction<Words>>;
@@ -17,11 +15,57 @@ export const WordsContext = createContext<{
 const Wordle = () => {
   const [words, setWords] = useState<Words>(INIT_WORDS);
   const [currentWordsIndex, setCurrentWordsIndex] = useState(0);
-  // 키보드에서는 키 입력만 받아오자
-  // 하나의 단어 박스가 가득차고 enter를 입력 받으면 다음 단어로 넘어가기
-  // 키보드에서도 입력된 단어들로 스타일을 변경해야 한다 -> words만 넘기기
-  // 실제 검증 로직은 cardcontainer에서 각각 하기 -> 해당 box에 대한 검증
-  // 여기에서는 words만 넘기고 현재 어떤 박스인지만 확인
+
+  const enterDownHandler = () => {
+    setCurrentWordsIndex((prev) => {
+      if (words[prev][INIT_WORDS[0].length - 1] === "") return prev;
+
+      return prev < INIT_WORDS.length ? prev + 1 : prev;
+    });
+  };
+
+  const backspaceDownHandler = () => {
+    setWords((prev) => {
+      const targetIndex = prev[currentWordsIndex].findLastIndex((char) => char);
+      if (targetIndex === -1) return prev;
+
+      prev[currentWordsIndex][targetIndex] = "";
+
+      return [...prev];
+    });
+  };
+
+  const charDownHandler = (key: string) => {
+    setWords((prev) => {
+      const targetIndex = prev[currentWordsIndex].findIndex((char) => !char);
+      if (targetIndex === -1) return prev;
+
+      prev[currentWordsIndex][targetIndex] = key;
+
+      return [...prev];
+    });
+  };
+
+  const keyDownHandler = useCallback(
+    ({ key }: KeyboardEvent) => {
+      if (currentWordsIndex === INIT_WORDS.length) return;
+      if (!KEY_WORDS_ARRAY.flat().includes(key.toUpperCase())) return;
+
+      if (key === "Enter") {
+        enterDownHandler();
+
+        return;
+      }
+
+      if (key === "Backspace") {
+        backspaceDownHandler();
+        return;
+      }
+
+      charDownHandler(key);
+    },
+    [currentWordsIndex]
+  );
 
   return (
     <>
@@ -40,7 +84,10 @@ const Wordle = () => {
             ))}
           </div>
           <div css={KeySection}>
-            <Keyboard />
+            <Keyboard
+              keyWords={KEY_WORDS_ARRAY}
+              keyDownHandler={keyDownHandler}
+            />
           </div>
         </div>
       </WordsContext.Provider>

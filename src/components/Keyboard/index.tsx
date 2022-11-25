@@ -1,66 +1,25 @@
 import KeyBox from "@/components/Keyboard/KeyBox";
-import { WordsContext } from "@/components/Wordle";
 import { css } from "@emotion/react";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 
-const KEY_WORDS_ARRAY = [
-  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-  ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE"],
-];
+interface Props {
+  keyWords: string[][];
+  keyDownHandler: (event: KeyboardEvent) => void;
+}
 
-const Keyboard = () => {
-  const WordsController = useContext(WordsContext);
-
+const Keyboard = ({ keyWords, keyDownHandler }: Props) => {
   useEffect(() => {
-    const keydownHandler =
-      (controller: typeof WordsController) =>
-      ({ key }: KeyboardEvent) => {
-        if (!controller) return;
-
-        const { words, setWords, currentWordsIndex, setCurrentWordsIndex } =
-          controller;
-
-        if (currentWordsIndex >= words.length) return;
-        if (!KEY_WORDS_ARRAY.flat().includes(key.toUpperCase())) return;
-
-        console.log(words, currentWordsIndex);
-
-        if (key === "Enter") {
-          if (words[currentWordsIndex][4] === "") return;
-
-          setCurrentWordsIndex((prev) => prev + 1);
-          return;
-        }
-
-        const currentTargetIndex = words[currentWordsIndex].findIndex(
-          (char) => char === ""
-        );
-
-        if (key === "Backspace") {
-          words[currentWordsIndex][currentTargetIndex] = "";
-          setWords([...words]);
-          return;
-        }
-
-        if (currentTargetIndex === -1) return;
-
-        words[currentWordsIndex][currentTargetIndex] = key.toUpperCase();
-
-        setWords([...words]);
-      };
-
-    window.addEventListener("keydown", keydownHandler(WordsController));
+    window.addEventListener("keydown", keyDownHandler);
 
     return () => {
-      window.removeEventListener("keydown", keydownHandler(WordsController));
+      window.removeEventListener("keydown", keyDownHandler);
     };
-  }, []);
+  }, [keyDownHandler]);
 
   return (
     <>
       <div css={Container}>
-        {KEY_WORDS_ARRAY.map((keys, index) => (
+        {keyWords.map((keys, index) => (
           <div key={index}>
             <KeyBox keys={keys} />
           </div>
