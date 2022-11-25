@@ -1,15 +1,28 @@
 import Delete from "@/assets/svg/Delete";
 import { css } from "@emotion/react";
 import { mq } from "@/styles";
+import { useContext } from "react";
+import { KeyboardContext } from "@/context";
 
 interface Props {
   text: string;
 }
 
 const KeyCard = ({ text }: Props) => {
+  const KeyboardController = useContext(KeyboardContext);
+
+  const onClickButton = () => {
+    if (!KeyboardController) return;
+
+    const { keyboardHandler } = KeyboardController;
+    keyboardHandler(text);
+  };
+
   return (
     <>
-      <div css={CardBox}>{text === "BACKSPACE" ? <Delete /> : text}</div>
+      <button css={CardBox} onClick={onClickButton}>
+        {text === "BACKSPACE" ? <Delete /> : text}
+      </button>
     </>
   );
 };

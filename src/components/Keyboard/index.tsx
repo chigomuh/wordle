@@ -1,30 +1,37 @@
 import KeyBox from "@/components/Keyboard/KeyBox";
+import { KeyboardContext } from "@/context";
 import { css } from "@emotion/react";
 import { useEffect } from "react";
 
 interface Props {
   keyWords: string[][];
-  keyDownHandler: (event: KeyboardEvent) => void;
+  keyboardHandler: (key: string) => void;
 }
 
-const Keyboard = ({ keyWords, keyDownHandler }: Props) => {
+const Keyboard = ({ keyWords, keyboardHandler }: Props) => {
   useEffect(() => {
-    window.addEventListener("keydown", keyDownHandler);
+    const keydownHandler = ({ key }: KeyboardEvent) => {
+      keyboardHandler(key.toUpperCase());
+    };
+
+    window.addEventListener("keydown", keydownHandler);
 
     return () => {
-      window.removeEventListener("keydown", keyDownHandler);
+      window.removeEventListener("keydown", keydownHandler);
     };
-  }, [keyDownHandler]);
+  }, [keyboardHandler]);
 
   return (
     <>
-      <div css={Container}>
-        {keyWords.map((keys, index) => (
-          <div key={index}>
-            <KeyBox keys={keys} />
-          </div>
-        ))}
-      </div>
+      <KeyboardContext.Provider value={{ keyboardHandler }}>
+        <div css={Container}>
+          {keyWords.map((keys, index) => (
+            <div key={index}>
+              <KeyBox keys={keys} />
+            </div>
+          ))}
+        </div>
+      </KeyboardContext.Provider>
     </>
   );
 };

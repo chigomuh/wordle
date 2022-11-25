@@ -1,16 +1,10 @@
 import CardContainer from "@/components/Wordle/CardContainer";
 import { css } from "@emotion/react";
 import { Words } from "@/types";
-import { createContext, Dispatch, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
 import { INIT_WORDS, KEY_WORDS_ARRAY } from "@/const/wordle";
-
-export const WordsContext = createContext<{
-  words: Words;
-  setWords: Dispatch<React.SetStateAction<Words>>;
-  currentWordsIndex: number;
-  setCurrentWordsIndex: Dispatch<React.SetStateAction<number>>;
-} | null>(null);
+import { WordsContext } from "@/context";
 
 const Wordle = () => {
   const [words, setWords] = useState<Words>(INIT_WORDS);
@@ -19,7 +13,6 @@ const Wordle = () => {
   const enterDownHandler = () => {
     setCurrentWordsIndex((prev) => {
       if (words[prev][INIT_WORDS[0].length - 1] === "") return prev;
-
       return prev < INIT_WORDS.length ? prev + 1 : prev;
     });
   };
@@ -30,7 +23,6 @@ const Wordle = () => {
       if (targetIndex === -1) return prev;
 
       prev[currentWordsIndex][targetIndex] = "";
-
       return [...prev];
     });
   };
@@ -41,23 +33,19 @@ const Wordle = () => {
       if (targetIndex === -1) return prev;
 
       prev[currentWordsIndex][targetIndex] = key;
-
       return [...prev];
     });
   };
 
-  const keyDownHandler = useCallback(
-    ({ key }: KeyboardEvent) => {
+  const keyboardHandler = useCallback(
+    (key: string) => {
       if (currentWordsIndex === INIT_WORDS.length) return;
-      if (!KEY_WORDS_ARRAY.flat().includes(key.toUpperCase())) return;
-
-      if (key === "Enter") {
+      if (!KEY_WORDS_ARRAY.flat().includes(key)) return;
+      if (key === "ENTER") {
         enterDownHandler();
-
         return;
       }
-
-      if (key === "Backspace") {
+      if (key === "BACKSPACE") {
         backspaceDownHandler();
         return;
       }
@@ -86,7 +74,7 @@ const Wordle = () => {
           <div css={KeySection}>
             <Keyboard
               keyWords={KEY_WORDS_ARRAY}
-              keyDownHandler={keyDownHandler}
+              keyboardHandler={keyboardHandler}
             />
           </div>
         </div>
