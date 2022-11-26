@@ -10,8 +10,8 @@ const CardContainer = ({ word }: Props) => {
   return (
     <>
       <div css={Container}>
-        {word.map((word, index) => (
-          <Card key={index} char={word} />
+        {word.map((char, index) => (
+          <Card key={index} char={char} />
         ))}
       </div>
     </>
