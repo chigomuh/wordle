@@ -3,8 +3,9 @@ import { css } from "@emotion/react";
 import { Words } from "@/types";
 import { useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
-import { INIT_WORDS, KEY_WORDS_ARRAY, WORD_STATE } from "@/const/wordle";
+import { INIT_WORDS, KEY_WORDS_ARRAY } from "@/const/wordle";
 import { WordsContext } from "@/context";
+import { getWordleResultArray } from "@/util/wordle";
 
 const Wordle = () => {
   const [words, setWords] = useState<Words>(INIT_WORDS);
@@ -17,53 +18,9 @@ const Wordle = () => {
     if (currentWordsIndex >= INIT_WORDS.length) return;
 
     setWords((prev) => {
-      const answerCharArr = [...answer];
-
-      const userAnswerCharArr = prev[currentWordsIndex].map(
-        ({ char }, index) => {
-          const isAnswer = [...answer][index] === char;
-          if (isAnswer) {
-            answerCharArr.splice(answerCharArr.indexOf(char), 1);
-          }
-
-          return {
-            char,
-            state: isAnswer ? WORD_STATE.ANSWER.type : WORD_STATE.NONE.type,
-          };
-        }
-      );
-
-      prev[currentWordsIndex] = userAnswerCharArr.map(
-        ({ char, state }, index) => {
-          if (state === WORD_STATE.ANSWER.type) return { char, state };
-
-          // 포함 X
-          const charIncludeIndex = answerCharArr.indexOf(char);
-          if (charIncludeIndex === -1) {
-            return {
-              char,
-              state: WORD_STATE.NONE.type,
-            };
-          }
-
-          // 포함 O & 위치 O
-          if (answer[index] === char) {
-            answerCharArr.splice(charIncludeIndex, 1);
-
-            return {
-              char,
-              state: WORD_STATE.ANSWER.type,
-            };
-          }
-
-          // 포함 O & 위치 X
-          answerCharArr.splice(charIncludeIndex, 1);
-
-          return {
-            char,
-            state: WORD_STATE.EXIST.type,
-          };
-        }
+      prev[currentWordsIndex] = getWordleResultArray(
+        answer,
+        prev[currentWordsIndex]
       );
 
       return [...prev];
@@ -116,29 +73,22 @@ const Wordle = () => {
 
   return (
     <>
-      <WordsContext.Provider
-        value={{
-          words,
-          setWords,
-          currentWordsIndex,
-          setCurrentWordsIndex,
-        }}
-      >
-        <div css={Container}>
-          <div css={WordleSection}>
-            {words.map((word, index) => (
-              <CardContainer key={index} word={word} />
-            ))}
-          </div>
-          <div>{answer}</div>
+      <div css={Container}>
+        <div css={WordleSection}>
+          {words.map((word, index) => (
+            <CardContainer key={index} word={word} />
+          ))}
+        </div>
+        <div>{answer}</div>
+        <WordsContext.Provider value={{ words, currentWordsIndex }}>
           <div css={KeySection}>
             <Keyboard
               keyWords={KEY_WORDS_ARRAY}
               keyboardHandler={keyboardHandler}
             />
           </div>
-        </div>
-      </WordsContext.Provider>
+        </WordsContext.Provider>
+      </div>
     </>
   );
 };

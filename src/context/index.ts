@@ -1,11 +1,9 @@
 import { Words } from "@/types";
-import { createContext, Dispatch } from "react";
+import { createContext } from "react";
 
 const WordsContext = createContext<{
   words: Words;
-  setWords: Dispatch<React.SetStateAction<Words>>;
   currentWordsIndex: number;
-  setCurrentWordsIndex: Dispatch<React.SetStateAction<number>>;
 } | null>(null);
 
 const KeyboardContext = createContext<{

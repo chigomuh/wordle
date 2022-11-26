@@ -3,12 +3,15 @@ import { css } from "@emotion/react";
 import { mq } from "@/styles";
 import { useContext } from "react";
 import { KeyboardContext } from "@/context";
+import { WordState } from "@/types";
+import { WORD_STATE } from "@/const/wordle";
 
 interface Props {
   text: string;
+  state: WordState;
 }
 
-const KeyCard = ({ text }: Props) => {
+const KeyCard = ({ text, state }: Props) => {
   const KeyboardController = useContext(KeyboardContext);
 
   const onClickButton = () => {
@@ -20,7 +23,7 @@ const KeyCard = ({ text }: Props) => {
 
   return (
     <>
-      <button css={CardBox} onClick={onClickButton}>
+      <button css={CardBox(state)} onClick={onClickButton}>
         {text === "BACKSPACE" ? <Delete /> : text}
       </button>
     </>
@@ -29,20 +32,25 @@ const KeyCard = ({ text }: Props) => {
 
 export default KeyCard;
 
-const CardBox = css({
-  width: "fit-content",
-  height: "3rem",
-  padding: "0 0.5rem",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#d3d6da",
-  borderRadius: "0.25rem",
-  fontWeight: "900",
-  wordBreak: "keep-all",
-  cursor: "pointer",
-  [mq[1]]: {
-    padding: "0 1rem",
-    height: "3.5rem",
-  },
-});
+const CardBox = (state: WordState) =>
+  css({
+    width: "fit-content",
+    height: "3rem",
+    padding: "0 0.5rem",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    // backgroundColor: "",
+    backgroundColor:
+      WORD_STATE.INIT.type === state || WORD_STATE.NONE.type === state
+        ? "#d3d6da"
+        : WORD_STATE[state].color,
+    borderRadius: "0.25rem",
+    fontWeight: "900",
+    wordBreak: "keep-all",
+    cursor: "pointer",
+    [mq[1]]: {
+      padding: "0 1rem",
+      height: "3.5rem",
+    },
+  });
