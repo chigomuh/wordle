@@ -11,7 +11,7 @@ const CardContainer = ({ word }: Props) => {
     <>
       <div css={Container}>
         {word.map((char, index) => (
-          <Card key={index} char={char} />
+          <Card key={index} char={char} index={index} />
         ))}
       </div>
     </>

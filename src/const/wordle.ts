@@ -36,4 +36,9 @@ const WORD_STATE = {
   },
 } as const;
 
-export { KEY_WORDS_ARRAY, INIT_WORDS, WORD_STATE };
+const NOTICE = {
+  NOT_IN_WORD_LIST: "Not in word list",
+  NOT_ENOUGH_LETTERS: "Not enough letters",
+} as const;
+
+export { KEY_WORDS_ARRAY, INIT_WORDS, WORD_STATE, NOTICE };
