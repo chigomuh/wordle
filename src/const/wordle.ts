@@ -39,6 +39,7 @@ const WORD_STATE = {
 const NOTICE = {
   NOT_IN_WORD_LIST: "Not in word list",
   NOT_ENOUGH_LETTERS: "Not enough letters",
+  CORRECT: ["Genius", "Magnificent", "Impressive", "Splendid", "Great", "Phew"],
 } as const;
 
 export { KEY_WORDS_ARRAY, INIT_WORDS, WORD_STATE, NOTICE };

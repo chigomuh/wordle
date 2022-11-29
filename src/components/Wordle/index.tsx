@@ -1,5 +1,5 @@
 import CardContainer from "@/components/Wordle/CardContainer";
-import { css, keyframes } from "@emotion/react";
+import { css } from "@emotion/react";
 import { Words } from "@/types";
 import { useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
@@ -47,7 +47,22 @@ const Wordle = () => {
       return [...prev];
     });
 
-    setCurrentWordsIndex((prev) => prev + 1);
+    // setTimeout 실행 전 동작 방지
+    setCurrentWordsIndex(INIT_WORDS.length);
+
+    setTimeout(() => {
+      if (answer.toLowerCase() === userAnswerWord) {
+        addNotice(NOTICE.CORRECT[currentWordsIndex], { isPopup: false });
+        setCurrentWordsIndex(INIT_WORDS.length);
+        return;
+      }
+
+      if (currentWordsIndex === INIT_WORDS.length - 1) {
+        addNotice(answer, { isPopup: false });
+      }
+
+      setCurrentWordsIndex(currentWordsIndex + 1);
+    }, 2000);
   };
 
   const backspaceDownHandler = () => {

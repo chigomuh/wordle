@@ -68,7 +68,7 @@ const CardBox = ({ state, char }: CharObj, index: number) => {
     fontSize: "2rem",
     fontWeight: "900",
     animation: isEntered
-      ? `${EnterEffect(prev, result)} 1s ease-in ${index * 300}ms forwards`
+      ? `${EnterEffect(prev, result)} 1s ease-in ${index * 200}ms forwards`
       : char !== ""
       ? `${ScaleEffect} 0.1s ease-in-out`
       : "none",

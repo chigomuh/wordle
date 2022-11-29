@@ -1,24 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+interface Option {
+  isPopup?: boolean;
+  duration?: number;
+}
 
 const useNotice = (initArr: string[] = []) => {
   const [notice, setNotice] = useState<string[]>(initArr);
 
-  const addNotice = (notice: string) => {
+  const addNotice = (notice: string, option?: Option) => {
+    const { isPopup = true, duration = 1000 } = option ?? {};
+
     setNotice((prev) => [notice, ...prev]);
-  };
 
-  useEffect(() => {
-    if (notice.length === 0) return;
+    if (!isPopup) return;
 
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       setNotice((prev) => {
         prev.pop();
         return [...prev];
       });
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [notice]);
+    }, duration);
+  };
 
   return { notice, addNotice };
 };
