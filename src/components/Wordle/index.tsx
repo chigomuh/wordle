@@ -1,21 +1,34 @@
 import CardContainer from "@/components/Wordle/CardContainer";
-import { css } from "@emotion/react";
+import { css, keyframes } from "@emotion/react";
 import { Words } from "@/types";
 import { useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
-import { INIT_WORDS, KEY_WORDS_ARRAY, NOTICE } from "@/const/wordle";
+import { KEY_WORDS_ARRAY, NOTICE } from "@/const/wordle";
 import { WordsContext } from "@/context";
-import { getWordleResultArray } from "@/util/wordle";
+import {
+  getInitWords,
+  getRandomWord,
+  getWordleResultArray,
+} from "@/util/wordle";
 import { WORDS } from "@/const/words";
-import useNotice from "@/hooks/useNotice";
+import { useNotice } from "@/hooks";
+import { mq } from "@/styles";
 
 const Wordle = () => {
-  const randomIndex = Math.floor(Math.random() * WORDS.length);
-  const INIT_ANSWER = WORDS[randomIndex];
+  const INIT_WORDS = getInitWords();
   const [words, setWords] = useState<Words>(INIT_WORDS);
   const [currentWordsIndex, setCurrentWordsIndex] = useState(0);
-  const [answer, setAnswer] = useState<string>(INIT_ANSWER.toUpperCase());
-  const { notice, addNotice } = useNotice();
+  const [answer, setAnswer] = useState(getRandomWord().toUpperCase());
+  const [gameOver, setGameOver] = useState(false);
+  const { notice, setNotice, addNotice } = useNotice();
+
+  const restartGame = () => {
+    setWords(getInitWords());
+    setCurrentWordsIndex(0);
+    setAnswer(getRandomWord().toUpperCase());
+    setNotice([]);
+    setGameOver(false);
+  };
 
   const enterDownHandler = () => {
     // 더이상 입력할 기회가 없음
@@ -54,11 +67,13 @@ const Wordle = () => {
       if (answer.toLowerCase() === userAnswerWord) {
         addNotice(NOTICE.CORRECT[currentWordsIndex], { isPopup: false });
         setCurrentWordsIndex(INIT_WORDS.length);
+        setGameOver(true);
         return;
       }
 
       if (currentWordsIndex === INIT_WORDS.length - 1) {
         addNotice(answer, { isPopup: false });
+        setGameOver(true);
       }
 
       setCurrentWordsIndex(currentWordsIndex + 1);
@@ -131,12 +146,79 @@ const Wordle = () => {
             />
           </div>
         </WordsContext.Provider>
+        {gameOver && (
+          <>
+            <div css={PopupContainer}>
+              <div css={BackPopup}></div>
+              <div css={Popup}>
+                <button onClick={restartGame}>Replay?</button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
 };
 
 export default Wordle;
+
+const ShowBottom = keyframes({
+  "0%": {
+    bottom: "-100%",
+  },
+  "100%": {
+    bottom: "0",
+  },
+});
+
+const PopupContainer = css({
+  position: "absolute",
+  top: "0",
+  left: "0",
+  width: "100%",
+  height: "100%",
+  zIndex: "999",
+});
+
+const BackPopup = css({
+  position: "absolute",
+  top: "0",
+  left: "0",
+  width: "100%",
+  height: "100%",
+  backgroundColor: "#ffffff",
+  opacity: "0.5",
+  zIndex: "100",
+});
+
+const Popup = css({
+  position: "absolute",
+  bottom: "0",
+  left: "0",
+  transform: "none",
+  width: "100%",
+  height: "80%",
+  maxHeight: "35rem",
+  backgroundColor: "#ffffff",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  fontSize: "2rem",
+  color: "#000000",
+  boxShadow: "0 4px 23px 0 rgb(0 0 0 / 20%)",
+  border: "1px solid #e2e2e2",
+  borderRadius: "0.5rem 0.5rem 0 0",
+  animation: `${ShowBottom} 0.8s ease-in-out`,
+  zIndex: "999",
+  [mq[1]]: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    maxWidth: "30rem",
+    borderRadius: "0.5rem",
+  },
+});
 
 const NoticeBox = css({
   width: "auto",
@@ -165,7 +247,7 @@ const NoticeSection = css({
   alignItems: "center",
   paddingTop: "5rem",
   gap: "1rem",
-  zIndex: "999",
+  zIndex: "100",
 });
 
 const KeySection = css({

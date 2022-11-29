@@ -1,4 +1,5 @@
 const words1 = [
+  "italy",
   "korea",
   "cigar",
   "rebut",

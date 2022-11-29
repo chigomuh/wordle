@@ -23,7 +23,7 @@ const useNotice = (initArr: string[] = []) => {
     }, duration);
   };
 
-  return { notice, addNotice };
+  return { notice, setNotice, addNotice };
 };
 
 export default useNotice;
