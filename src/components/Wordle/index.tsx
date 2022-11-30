@@ -3,9 +3,10 @@ import { css, keyframes } from "@emotion/react";
 import { Words } from "@/types";
 import { useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
-import { KEY_WORDS_ARRAY, NOTICE } from "@/const/wordle";
+import { KEY_WORDS_ARRAY, NOTICE, WORD_STATE } from "@/const/wordle";
 import { WordsContext } from "@/context";
 import {
+  getConvertWordsResultToShare,
   getInitWords,
   getRandomWord,
   getWordleResultArray,
@@ -13,6 +14,8 @@ import {
 import { WORDS } from "@/const/words";
 import { useNotice } from "@/hooks";
 import { mq } from "@/styles";
+import Card from "./Card";
+import Share from "@/assets/svg/Share";
 
 const Wordle = () => {
   const INIT_WORDS = getInitWords();
@@ -28,6 +31,20 @@ const Wordle = () => {
     setAnswer(getRandomWord().toUpperCase());
     setNotice([]);
     setGameOver(false);
+  };
+
+  const onClickShare = () => {
+    const convertWordsResult = getConvertWordsResultToShare(words);
+    const shareText = `Wordle <${answer}> \n ${convertWordsResult}`;
+
+    navigator.clipboard.writeText(shareText).then(
+      () => {
+        addNotice(NOTICE.COPY_SUCCESSED);
+      },
+      () => {
+        addNotice(NOTICE.COPY_FAILED);
+      }
+    );
   };
 
   const enterDownHandler = () => {
@@ -65,14 +82,14 @@ const Wordle = () => {
 
     setTimeout(() => {
       if (answer.toLowerCase() === userAnswerWord) {
-        addNotice(NOTICE.CORRECT[currentWordsIndex], { isPopup: false });
+        addNotice(NOTICE.CORRECT[currentWordsIndex]);
         setCurrentWordsIndex(INIT_WORDS.length);
         setGameOver(true);
         return;
       }
 
       if (currentWordsIndex === INIT_WORDS.length - 1) {
-        addNotice(answer, { isPopup: false });
+        addNotice(answer);
         setGameOver(true);
       }
 
@@ -137,7 +154,6 @@ const Wordle = () => {
             <CardContainer key={index} word={word} />
           ))}
         </div>
-        <div>{answer}</div>
         <WordsContext.Provider value={{ words, currentWordsIndex }}>
           <div css={KeySection}>
             <Keyboard
@@ -151,7 +167,38 @@ const Wordle = () => {
             <div css={PopupContainer}>
               <div css={BackPopup}></div>
               <div css={Popup}>
-                <button onClick={restartGame}>Replay?</button>
+                <div css={PopupBox}>
+                  <span css={Title}>Wordle</span>
+                  <div css={AnswerBox}>
+                    {[...answer].map((char, index) => (
+                      <Card
+                        key={index}
+                        char={{ char, state: WORD_STATE.ANSWER.type }}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                  <div css={ButtonBox}>
+                    <button
+                      onClick={restartGame}
+                      css={Button("#f7da21", "#000000")}
+                    >
+                      <span>Replay?</span>
+                      <img
+                        css={ImageIcon}
+                        src={"/wordle-favicon.ico"}
+                        alt="wordle-icon"
+                      />
+                    </button>
+                    <button
+                      onClick={onClickShare}
+                      css={Button(WORD_STATE.ANSWER.color, "#ffffff")}
+                    >
+                      <span>Share</span>
+                      <Share />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </>
@@ -170,6 +217,63 @@ const ShowBottom = keyframes({
   "100%": {
     bottom: "0",
   },
+});
+
+const Title = css({
+  fontSize: "2rem",
+  fontWeight: "900",
+});
+
+const AnswerBox = css({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "0.4rem",
+  width: "100%",
+  maxWidth: "30rem",
+  height: "auto",
+});
+
+const ImageIcon = css({
+  width: "1.5rem",
+  height: "1.5rem",
+});
+
+const ButtonBox = css({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "100%",
+  height: "auto",
+  gap: "1rem",
+});
+
+const Button = (backgroundColor: string, color: string) =>
+  css({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: "20rem",
+    height: "3rem",
+    fontSize: "1rem",
+    fontWeight: "900",
+    backgroundColor,
+    color,
+    gap: "1rem",
+    padding: "0 1rem",
+    borderRadius: "1.5rem",
+  });
+
+const PopupBox = css({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: "100%",
+  height: "100%",
+  gap: "1rem",
+  padding: "1rem",
 });
 
 const PopupContainer = css({
@@ -208,7 +312,7 @@ const Popup = css({
   color: "#000000",
   boxShadow: "0 4px 23px 0 rgb(0 0 0 / 20%)",
   border: "1px solid #e2e2e2",
-  borderRadius: "0.5rem 0.5rem 0 0",
+  borderRadius: "2rem 2rem 0 0",
   animation: `${ShowBottom} 0.8s ease-in-out`,
   zIndex: "999",
   [mq[1]]: {

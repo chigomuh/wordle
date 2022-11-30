@@ -23,10 +23,21 @@ const WORD_STATE = {
   },
 } as const;
 
+const CORRECT = [
+  "Genius",
+  "Magnificent",
+  "Impressive",
+  "Splendid",
+  "Great",
+  "Phew",
+] as const;
+
 const NOTICE = {
   NOT_IN_WORD_LIST: "Not in word list",
   NOT_ENOUGH_LETTERS: "Not enough letters",
-  CORRECT: ["Genius", "Magnificent", "Impressive", "Splendid", "Great", "Phew"],
+  COPY_SUCCESSED: "Copied results to clipboard",
+  COPY_FAILED: "Failed to copy results to clipboard",
+  CORRECT,
 } as const;
 
 export { KEY_WORDS_ARRAY, WORD_STATE, NOTICE };
