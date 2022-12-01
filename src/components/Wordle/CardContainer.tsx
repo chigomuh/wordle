@@ -8,17 +8,23 @@ interface Props {
 
 const CardContainer = ({ word }: Props) => {
   return (
-    <>
-      <div css={Container}>
-        {word.map((char, index) => (
-          <Card key={index} char={char} index={index} />
-        ))}
-      </div>
-    </>
+    <div css={Container}>
+      {word.map((char, index) => (
+        <div css={CardBox} key={index}>
+          <Card char={char} index={index} />
+        </div>
+      ))}
+    </div>
   );
 };
 
 export default CardContainer;
+
+const CardBox = css({
+  width: "4rem",
+  height: "4rem",
+  fontSize: "2rem",
+});
 
 const Container = css({
   display: "flex",
@@ -26,4 +32,6 @@ const Container = css({
   justifyContent: "center",
   alingItems: "center",
   gap: "0.4rem",
+  width: "100%",
+  height: "auto",
 });

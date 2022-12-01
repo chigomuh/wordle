@@ -18,8 +18,8 @@ import Card from "./Card";
 import Share from "@/assets/svg/Share";
 
 const Wordle = () => {
-  const INIT_WORDS = getInitWords();
-  const [words, setWords] = useState<Words>(INIT_WORDS);
+  const initWords = getInitWords();
+  const [words, setWords] = useState<Words>(initWords);
   const [currentWordsIndex, setCurrentWordsIndex] = useState(0);
   const [answer, setAnswer] = useState(getRandomWord().toUpperCase());
   const [gameOver, setGameOver] = useState(false);
@@ -49,7 +49,7 @@ const Wordle = () => {
 
   const enterDownHandler = () => {
     // 더이상 입력할 기회가 없음
-    if (currentWordsIndex >= INIT_WORDS.length) return;
+    if (currentWordsIndex >= initWords.length) return;
 
     // 유저 입력 단어(소문자)
     const userAnswerWord = words[currentWordsIndex]
@@ -78,17 +78,17 @@ const Wordle = () => {
     });
 
     // setTimeout 실행 전 동작 방지
-    setCurrentWordsIndex(INIT_WORDS.length);
+    setCurrentWordsIndex(initWords.length);
 
     setTimeout(() => {
       if (answer.toLowerCase() === userAnswerWord) {
         addNotice(NOTICE.CORRECT[currentWordsIndex]);
-        setCurrentWordsIndex(INIT_WORDS.length);
+        setCurrentWordsIndex(initWords.length);
         setGameOver(true);
         return;
       }
 
-      if (currentWordsIndex === INIT_WORDS.length - 1) {
+      if (currentWordsIndex === initWords.length - 1) {
         addNotice(answer);
         setGameOver(true);
       }
@@ -123,7 +123,7 @@ const Wordle = () => {
 
   const keyboardHandler = useCallback(
     (key: string) => {
-      if (currentWordsIndex === INIT_WORDS.length) return;
+      if (currentWordsIndex === initWords.length) return;
       if (!KEY_WORDS_ARRAY.flat().includes(key)) return;
       if (key === "ENTER") {
         enterDownHandler();

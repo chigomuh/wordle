@@ -10,11 +10,7 @@ interface Props {
 const Card = ({ char, index }: Props) => {
   const { char: value } = char;
 
-  return (
-    <>
-      <div css={CardBox(char, index)}>{value}</div>
-    </>
-  );
+  return <div css={CardBox(char, index)}>{value}</div>;
 };
 
 export default Card;
@@ -60,12 +56,11 @@ const CardBox = ({ state, char }: CharObj, index: number) => {
 
   return css({
     ...prev,
-    width: "4rem",
-    height: "4rem",
+    width: "100%",
+    height: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    fontSize: "2rem",
     fontWeight: "900",
     animation: isEntered
       ? `${EnterEffect(prev, result)} 1s ease-in ${index * 200}ms forwards`
