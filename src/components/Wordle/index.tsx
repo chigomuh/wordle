@@ -35,7 +35,7 @@ const Wordle = () => {
 
   const onClickShare = () => {
     const convertWordsResult = getConvertWordsResultToShare(words);
-    const shareText = `Wordle <${answer}> \n ${convertWordsResult}`;
+    const shareText = `Wordle <${answer}>\n${convertWordsResult}`;
 
     navigator.clipboard.writeText(shareText).then(
       () => {
@@ -162,6 +162,7 @@ const Wordle = () => {
             />
           </div>
         </WordsContext.Provider>
+        <div>{answer}</div>
         {gameOver && (
           <>
             <div css={PopupContainer}>
@@ -171,11 +172,13 @@ const Wordle = () => {
                   <span css={Title}>Wordle</span>
                   <div css={AnswerBox}>
                     {[...answer].map((char, index) => (
-                      <Card
-                        key={index}
-                        char={{ char, state: WORD_STATE.ANSWER.type }}
-                        index={index}
-                      />
+                      <div css={CardBox}>
+                        <Card
+                          key={index}
+                          char={{ char, state: WORD_STATE.ANSWER.type }}
+                          index={index}
+                        />
+                      </div>
                     ))}
                   </div>
                   <div css={ButtonBox}>
@@ -217,6 +220,20 @@ const ShowBottom = keyframes({
   "100%": {
     bottom: "0",
   },
+});
+
+const ShowBottomTopProp = keyframes({
+  "0%": {
+    transform: "translate(-50%, 100%)",
+  },
+  "100%": {
+    transform: "translate(-50%, -50%)",
+  },
+});
+
+const CardBox = css({
+  width: "4rem",
+  height: "4rem",
 });
 
 const Title = css({
@@ -283,6 +300,7 @@ const PopupContainer = css({
   width: "100%",
   height: "100%",
   zIndex: "999",
+  overflow: "hidden",
 });
 
 const BackPopup = css({
@@ -313,14 +331,14 @@ const Popup = css({
   boxShadow: "0 4px 23px 0 rgb(0 0 0 / 20%)",
   border: "1px solid #e2e2e2",
   borderRadius: "2rem 2rem 0 0",
-  animation: `${ShowBottom} 0.8s ease-in-out`,
+  animation: `${ShowBottom} 0.5s ease-in-out forwards`,
   zIndex: "999",
   [mq[1]]: {
     top: "50%",
     left: "50%",
-    transform: "translate(-50%, -50%)",
     maxWidth: "30rem",
     borderRadius: "0.5rem",
+    animation: `${ShowBottomTopProp} 0.5s ease-in-out forwards`,
   },
 });
 
