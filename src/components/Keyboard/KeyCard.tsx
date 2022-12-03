@@ -34,13 +34,13 @@ export default KeyCard;
 
 const CardBox = (state: WordState) =>
   css({
+    fontSize: "0.8rem",
     width: "fit-content",
-    height: "3rem",
+    height: "2.5rem",
     padding: "0 0.5rem",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "",
     backgroundColor:
       WORD_STATE.INIT.type === state || WORD_STATE.NONE.type === state
         ? "#d3d6da"
@@ -52,5 +52,6 @@ const CardBox = (state: WordState) =>
     [mq[1]]: {
       padding: "0 1rem",
       height: "3.5rem",
+      fontSize: "1rem",
     },
   });
