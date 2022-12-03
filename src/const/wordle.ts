@@ -42,23 +42,26 @@ const NOTICE = {
 
 const EXAMPLE_WORDS = [
   {
+    id: 1,
     word: "WEARY",
     correctIndex: 0,
     state: WORD_STATE.ANSWER.type,
     description: "W is in the word and in the correct spot.",
   },
   {
+    id: 2,
     word: "PILLS",
     correctIndex: 1,
     state: WORD_STATE.EXIST.type,
     description: "I is in the word but in the wrong spot.",
   },
   {
+    id: 3,
     word: "VAGUE",
     correctIndex: 3,
     state: WORD_STATE.NONE.type,
     description: "U is not in the word in any spot.",
   },
-] as const;
+];
 
 export { KEY_WORDS_ARRAY, WORD_STATE, NOTICE, EXAMPLE_WORDS };

@@ -1,5 +1,6 @@
 import KeyBox from "@/components/Keyboard/KeyBox";
 import { KeyboardContext } from "@/context";
+import { mq } from "@/styles";
 import { css } from "@emotion/react";
 import { useEffect } from "react";
 
@@ -26,9 +27,7 @@ const Keyboard = ({ keyWords, keyboardHandler }: Props) => {
       <KeyboardContext.Provider value={{ keyboardHandler }}>
         <div css={Container}>
           {keyWords.map((keys, index) => (
-            <div key={index}>
-              <KeyBox keys={keys} />
-            </div>
+            <KeyBox key={index} keys={keys} />
           ))}
         </div>
       </KeyboardContext.Provider>
@@ -43,7 +42,10 @@ const Container = css({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  gap: "0.4rem",
+  gap: "0.2rem",
   width: "100%",
   height: "auto",
+  [mq[1]]: {
+    gap: "0.4rem",
+  },
 });

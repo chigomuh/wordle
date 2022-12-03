@@ -1,6 +1,7 @@
 import KeyCard from "@/components/Keyboard/KeyCard";
 import { WORD_STATE } from "@/const/wordle";
 import { WordsContext } from "@/context";
+import { mq } from "@/styles";
 import { WordState } from "@/types";
 import { css } from "@emotion/react";
 import { useContext, useMemo } from "react";
@@ -71,7 +72,10 @@ const Container = css({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-  gap: "0.4rem",
+  gap: "0.2rem",
   width: "100%",
   height: "auto",
+  [mq[1]]: {
+    gap: "0.4rem",
+  },
 });

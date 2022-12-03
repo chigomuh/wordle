@@ -1,6 +1,7 @@
 import Card from "@/components/Wordle/Card";
 import { css } from "@emotion/react";
 import { Word } from "@/types";
+import { mq } from "@/styles";
 
 interface Props {
   word: Word;
@@ -21,9 +22,14 @@ const CardContainer = ({ word }: Props) => {
 export default CardContainer;
 
 const CardBox = css({
-  width: "4rem",
-  height: "4rem",
-  fontSize: "2rem",
+  width: "3rem",
+  height: "3rem",
+  fontSize: "1.5rem",
+  [mq[1]]: {
+    width: "4rem",
+    height: "4rem",
+    fontSize: "2rem",
+  },
 });
 
 const Container = css({

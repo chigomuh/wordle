@@ -1,11 +1,12 @@
 import CardContainer from "@/components/Wordle/CardContainer";
-import { css, keyframes } from "@emotion/react";
+import { css } from "@emotion/react";
 import { Words } from "@/types";
 import { useCallback, useState } from "react";
 import Keyboard from "@/components/Keyboard";
 import { KEY_WORDS_ARRAY, NOTICE, WORD_STATE } from "@/const/wordle";
 import { WordsContext } from "@/context";
 import {
+  copyClipboard,
   getConvertWordsResultToShare,
   getInitWords,
   getRandomWord,
@@ -13,9 +14,9 @@ import {
 } from "@/util/wordle";
 import { WORDS } from "@/const/words";
 import { useNotice } from "@/hooks";
-import { mq } from "@/styles";
 import Card from "./Card";
 import Share from "@/assets/svg/Share";
+import PopupModal from "@/components/common/PopupModal";
 
 const Wordle = () => {
   const initWords = getInitWords();
@@ -37,24 +38,15 @@ const Wordle = () => {
     const convertWordsResult = getConvertWordsResultToShare(words);
     const shareText = `Wordle <${answer}>\n${convertWordsResult}`;
 
-    navigator.clipboard.writeText(shareText).then(
-      () => {
-        addNotice(NOTICE.COPY_SUCCESSED);
-      },
-      () => {
-        try {
-          const textArea = document.createElement("textarea");
-          textArea.value = shareText;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand("copy");
-          document.body.removeChild(textArea);
-          addNotice(NOTICE.COPY_SUCCESSED);
-        } catch (error) {
-          addNotice(NOTICE.COPY_FAILED);
-        }
-      }
-    );
+    const successHandle = () => {
+      addNotice(NOTICE.COPY_SUCCESSED);
+    };
+
+    const failHandle = () => {
+      addNotice(NOTICE.COPY_FAILED);
+    };
+
+    copyClipboard(shareText, successHandle, failHandle);
   };
 
   const enterDownHandler = () => {
@@ -173,46 +165,36 @@ const Wordle = () => {
           </div>
         </WordsContext.Provider>
         {gameOver && (
-          <>
-            <div css={PopupContainer}>
-              <div css={BackPopup}></div>
-              <div css={Popup}>
-                <div css={PopupBox}>
-                  <span css={Title}>Wordle</span>
-                  <div css={AnswerBox}>
-                    {[...answer].map((char, index) => (
-                      <div css={CardBox} key={index}>
-                        <Card
-                          char={{ char, state: WORD_STATE.ANSWER.type }}
-                          index={index}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div css={ButtonBox}>
-                    <button
-                      onClick={restartGame}
-                      css={Button("#f7da21", "#000000")}
-                    >
-                      <span>Replay?</span>
-                      <img
-                        css={ImageIcon}
-                        src={"./wordle-favicon.ico"}
-                        alt="wordle-icon"
-                      />
-                    </button>
-                    <button
-                      onClick={onClickShare}
-                      css={Button(WORD_STATE.ANSWER.color, "#ffffff")}
-                    >
-                      <span>Share</span>
-                      <Share />
-                    </button>
-                  </div>
+          <PopupModal>
+            <span css={Title}>Wordle</span>
+            <div css={AnswerBox}>
+              {[...answer].map((char, index) => (
+                <div css={CardBox} key={index}>
+                  <Card
+                    char={{ char, state: WORD_STATE.ANSWER.type }}
+                    index={index}
+                  />
                 </div>
-              </div>
+              ))}
             </div>
-          </>
+            <div css={ButtonBox}>
+              <button onClick={restartGame} css={Button("#f7da21", "#000000")}>
+                <span>Replay?</span>
+                <img
+                  css={ImageIcon}
+                  src={"./wordle-favicon.ico"}
+                  alt="wordle-icon"
+                />
+              </button>
+              <button
+                onClick={onClickShare}
+                css={Button(WORD_STATE.ANSWER.color, "#ffffff")}
+              >
+                <span>Share</span>
+                <Share />
+              </button>
+            </div>
+          </PopupModal>
         )}
       </div>
     </>
@@ -220,24 +202,6 @@ const Wordle = () => {
 };
 
 export default Wordle;
-
-const ShowBottom = keyframes({
-  "0%": {
-    bottom: "-100%",
-  },
-  "100%": {
-    bottom: "0",
-  },
-});
-
-const ShowBottomTopProp = keyframes({
-  "0%": {
-    transform: "translate(-50%, 100%)",
-  },
-  "100%": {
-    transform: "translate(-50%, -50%)",
-  },
-});
 
 const CardBox = css({
   width: "4rem",
@@ -289,66 +253,6 @@ const Button = (backgroundColor: string, color: string) =>
     padding: "0 1rem",
     borderRadius: "1.5rem",
   });
-
-const PopupBox = css({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between",
-  width: "100%",
-  height: "100%",
-  gap: "1rem",
-  padding: "1rem",
-});
-
-const PopupContainer = css({
-  position: "absolute",
-  top: "0",
-  left: "0",
-  width: "100%",
-  height: "100%",
-  zIndex: "999",
-  overflow: "hidden",
-});
-
-const BackPopup = css({
-  position: "absolute",
-  top: "0",
-  left: "0",
-  width: "100%",
-  height: "100%",
-  backgroundColor: "#ffffff",
-  opacity: "0.5",
-  zIndex: "100",
-});
-
-const Popup = css({
-  position: "absolute",
-  bottom: "0",
-  left: "0",
-  transform: "none",
-  width: "100%",
-  height: "80%",
-  maxHeight: "35rem",
-  backgroundColor: "#ffffff",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  fontSize: "2rem",
-  color: "#000000",
-  boxShadow: "0 4px 23px 0 rgb(0 0 0 / 20%)",
-  border: "1px solid #e2e2e2",
-  borderRadius: "2rem 2rem 0 0",
-  animation: `${ShowBottom} 0.5s ease-in-out forwards`,
-  zIndex: "999",
-  [mq[1]]: {
-    top: "50%",
-    left: "50%",
-    maxWidth: "30rem",
-    borderRadius: "0.5rem",
-    animation: `${ShowBottomTopProp} 0.5s ease-in-out forwards`,
-  },
-});
 
 const NoticeBox = css({
   width: "auto",
@@ -403,8 +307,9 @@ const Container = css({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  alingItems: "center",
+  alignItems: "baseline",
   width: "100%",
-  height: "100vh",
+  height: "calc(100vh - 4rem)",
   padding: "1rem 0",
+  gap: "1rem",
 });

@@ -2,7 +2,8 @@
 import Question from "@/assets/svg/Question";
 import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
-import HowToPlay from "../Wordle/HowToPlay";
+import PopupModal from "@/components/common/PopupModal";
+import HowToPlay from "@/components/Wordle/HowToPlay";
 
 const Icons = () => {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,11 @@ const Icons = () => {
       <div css={CursorPointer} onClick={onClickQuestionIcon}>
         <Question width={32} height={32} />
       </div>
-      {open && <HowToPlay onClickClose={() => setOpen(false)} />}
+      {open && (
+        <PopupModal>
+          <HowToPlay onClickClose={() => setOpen(false)} />
+        </PopupModal>
+      )}
       {/* <div css={CursorPointer}>
         <Setting width={30} height={30} />
       </div> */}
