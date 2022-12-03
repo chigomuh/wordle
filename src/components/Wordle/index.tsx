@@ -42,7 +42,17 @@ const Wordle = () => {
         addNotice(NOTICE.COPY_SUCCESSED);
       },
       () => {
-        addNotice(NOTICE.COPY_FAILED);
+        try {
+          const textArea = document.createElement("textarea");
+          textArea.value = shareText;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+          addNotice(NOTICE.COPY_SUCCESSED);
+        } catch (error) {
+          addNotice(NOTICE.COPY_FAILED);
+        }
       }
     );
   };
@@ -187,7 +197,7 @@ const Wordle = () => {
                       <span>Replay?</span>
                       <img
                         css={ImageIcon}
-                        src={"/wordle-favicon.ico"}
+                        src={"./wordle-favicon.ico"}
                         alt="wordle-icon"
                       />
                     </button>
