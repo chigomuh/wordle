@@ -41,12 +41,10 @@ const CardBox = (state: WordState) =>
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor:
-    //   WORD_STATE.INIT.type === state || WORD_STATE.NONE.type === state
-    //     ? "#d3d6da"
-    //     : WORD_STATE[state].color,
     backgroundColor:
-      state === WORD_STATE.INIT.type ? "#d3d6da" : WORD_STATE[state].color,
+      WORD_STATE.INIT.type === state || WORD_STATE.NONE.type === state
+        ? "#d3d6da"
+        : WORD_STATE[state].color,
     borderRadius: "0.25rem",
     fontWeight: "900",
     wordBreak: "keep-all",
