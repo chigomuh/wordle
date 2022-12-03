@@ -162,7 +162,6 @@ const Wordle = () => {
             />
           </div>
         </WordsContext.Provider>
-        <div>{answer}</div>
         {gameOver && (
           <>
             <div css={PopupContainer}>
@@ -172,9 +171,8 @@ const Wordle = () => {
                   <span css={Title}>Wordle</span>
                   <div css={AnswerBox}>
                     {[...answer].map((char, index) => (
-                      <div css={CardBox}>
+                      <div css={CardBox} key={index}>
                         <Card
-                          key={index}
                           char={{ char, state: WORD_STATE.ANSWER.type }}
                           index={index}
                         />
