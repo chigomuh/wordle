@@ -1,7 +1,7 @@
 import KeyCard from "@/components/Keyboard/KeyCard";
 import { useWordle } from "@/hooks";
 import { mq } from "@/styles";
-import getKeysStateObjArray from "@/util/wordle/getKeysStateObjArray";
+import { getKeysStateObjArray } from "@/util/wordle";
 import { css } from "@emotion/react";
 
 interface Props {
