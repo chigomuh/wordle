@@ -15,13 +15,17 @@ const useNotice = (initArr: string[] = []) => {
 
     if (!isPopup) return;
 
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setNotice((prev) => {
         prev.pop();
         return [...prev];
       });
     }, duration);
+
+    return () => clearTimeout(timeoutId);
   };
+
+  console.log("notice", notice);
 
   return { notice, setNotice, addNotice };
 };

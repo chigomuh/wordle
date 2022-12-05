@@ -1,17 +1,17 @@
 import KeyCard from "@/components/Keyboard/KeyCard";
 import { WORD_STATE } from "@/const/wordle";
-import { WordsContext } from "@/context";
+import { useWordle } from "@/hooks";
 import { mq } from "@/styles";
 import { WordState } from "@/types";
 import { css } from "@emotion/react";
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 
 interface Props {
   keys: string[];
 }
 
 const KeyBox = ({ keys }: Props) => {
-  const WordsController = useContext(WordsContext);
+  const { words, currentWordsIndex } = useWordle();
   const charStateInfoObj: {
     [key: string]: WordState;
   } = {};
@@ -22,7 +22,7 @@ const KeyBox = ({ keys }: Props) => {
   });
 
   // char 상태 업데이트
-  WordsController?.words.flat().forEach(({ char, state }) => {
+  words.flat().forEach(({ char, state }) => {
     if (!char) return;
     if (!keys.includes(char)) return;
 
@@ -52,7 +52,7 @@ const KeyBox = ({ keys }: Props) => {
         key,
         state,
       })),
-    [WordsController?.currentWordsIndex]
+    [currentWordsIndex]
   );
 
   return (

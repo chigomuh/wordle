@@ -1,10 +1,9 @@
 import Delete from "@/assets/svg/Delete";
 import { css } from "@emotion/react";
 import { mq } from "@/styles";
-import { useContext } from "react";
-import { KeyboardContext } from "@/context";
 import { WordState } from "@/types";
 import { WORD_STATE } from "@/const/wordle";
+import { useWordle } from "@/hooks";
 
 interface Props {
   text: string;
@@ -12,12 +11,9 @@ interface Props {
 }
 
 const KeyCard = ({ text, state }: Props) => {
-  const KeyboardController = useContext(KeyboardContext);
+  const { keyboardHandler } = useWordle();
 
   const onClickButton = () => {
-    if (!KeyboardController) return;
-
-    const { keyboardHandler } = KeyboardController;
     keyboardHandler(text);
   };
 

@@ -1,15 +1,13 @@
 import KeyBox from "@/components/Keyboard/KeyBox";
-import { KeyboardContext } from "@/context";
+import { KEY_WORDS_ARRAY } from "@/const/wordle";
+import { useWordle } from "@/hooks";
 import { mq } from "@/styles";
 import { css } from "@emotion/react";
 import { useEffect } from "react";
 
-interface Props {
-  keyWords: string[][];
-  keyboardHandler: (key: string) => void;
-}
+const Keyboard = () => {
+  const { keyboardHandler } = useWordle();
 
-const Keyboard = ({ keyWords, keyboardHandler }: Props) => {
   useEffect(() => {
     const keydownHandler = ({ key }: KeyboardEvent) => {
       keyboardHandler(key.toUpperCase());
@@ -24,13 +22,11 @@ const Keyboard = ({ keyWords, keyboardHandler }: Props) => {
 
   return (
     <>
-      <KeyboardContext.Provider value={{ keyboardHandler }}>
-        <div css={Container}>
-          {keyWords.map((keys, index) => (
-            <KeyBox key={index} keys={keys} />
-          ))}
-        </div>
-      </KeyboardContext.Provider>
+      <div css={Container}>
+        {KEY_WORDS_ARRAY.map((keys, index) => (
+          <KeyBox key={index} keys={keys} />
+        ))}
+      </div>
     </>
   );
 };
