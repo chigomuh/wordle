@@ -36,4 +36,4 @@ const getKeysStateObjArray = (keys: string[], words: Words) => {
   return keyStateInfoArray;
 };
 
-export default getKeysStateObjArray;
+export { getKeysStateObjArray };
