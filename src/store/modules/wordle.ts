@@ -1,10 +1,18 @@
-import { getInitWords } from "@/util/wordle";
+import { Words } from "@/types";
+import { getInitWords, getRandomWord } from "@/util/wordle";
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface WordleState {
+  words: Words;
+  currentWordsIndex: number;
+  answer: string;
+  gameOver: boolean;
+}
+
+const initialState: WordleState = {
   words: getInitWords(),
   currentWordsIndex: 0,
-  answer: "",
+  answer: getRandomWord().toUpperCase(),
   gameOver: false,
 };
 

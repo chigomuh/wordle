@@ -15,11 +15,11 @@ import {
   getRandomWord,
   getWordleResultArray,
 } from "@/util/wordle";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useAppDispatch, useAppSelector, useNotice } from ".";
 
 const useWordle = () => {
-  const { notice, setNotice, addNotice } = useNotice();
+  const { notice, addNoticeAndTimeoutPopWithDelay, resetNotice } = useNotice();
   const { words, currentWordsIndex, answer, gameOver } = useAppSelector(
     ({ wordle }) => wordle
   );
@@ -30,8 +30,8 @@ const useWordle = () => {
     dispatch(setAnswer(getRandomWord().toUpperCase()));
     dispatch(setCurrentWordsIndex(0));
     dispatch(setGameOver(false));
-    setNotice([]);
-  }, [dispatch, setNotice]);
+    resetNotice();
+  }, [dispatch]);
 
   const changeWord = useCallback(
     (word: CharObj[], index = currentWordsIndex) => {
@@ -66,15 +66,15 @@ const useWordle = () => {
     const shareText = `Wordle <${answer}>\n${convertWordsResult}`;
 
     const successHandle = () => {
-      addNotice(NOTICE.COPY_SUCCESSED);
+      addNoticeAndTimeoutPopWithDelay(NOTICE.COPY_SUCCESSED);
     };
 
     const failHandle = () => {
-      addNotice(NOTICE.COPY_FAILED);
+      addNoticeAndTimeoutPopWithDelay(NOTICE.COPY_FAILED);
     };
 
     copyClipboard(shareText, successHandle, failHandle);
-  }, [words, answer, addNotice]);
+  }, [words, answer]);
 
   const enterDownHandler = useCallback(() => {
     // 더이상 입력할 기회가 없음
@@ -87,13 +87,13 @@ const useWordle = () => {
 
     // 유저 입력 단어의 길이가 유효하지 않은 경우
     if (userAnswerWord.length !== answer.length) {
-      addNotice(NOTICE.NOT_ENOUGH_LETTERS);
+      addNoticeAndTimeoutPopWithDelay(NOTICE.NOT_ENOUGH_LETTERS);
       return;
     }
 
     // 단어 리스트에 없는 경우
     if (!WORDS.includes(userAnswerWord)) {
-      addNotice(NOTICE.NOT_IN_WORD_LIST);
+      addNoticeAndTimeoutPopWithDelay(NOTICE.NOT_IN_WORD_LIST);
       return;
     }
 
@@ -106,20 +106,20 @@ const useWordle = () => {
 
     setTimeout(() => {
       if (answer.toLowerCase() === userAnswerWord) {
-        addNotice(NOTICE.CORRECT[currentWordsIndex]);
+        addNoticeAndTimeoutPopWithDelay(NOTICE.CORRECT[currentWordsIndex]);
         changeCurrentWordsIndex(words.length);
         changeGameOver(true);
         return;
       }
 
       if (currentWordsIndex === words.length - 1) {
-        addNotice(answer);
+        addNoticeAndTimeoutPopWithDelay(answer);
         changeGameOver(true);
       }
 
       changeCurrentWordsIndex(currentWordsIndex + 1);
     }, 2000);
-  }, [currentWordsIndex, words, answer, addNotice]);
+  }, [currentWordsIndex, words, answer]);
 
   const backspaceDownHandler = useCallback(() => {
     const targetIndex = words[currentWordsIndex].findLastIndex(
@@ -158,14 +158,9 @@ const useWordle = () => {
     [currentWordsIndex, words]
   );
 
-  useEffect(() => {
-    dispatch(setAnswer(getRandomWord().toUpperCase()));
-  }, [dispatch]);
-
   return {
     answer,
     notice,
-    addNotice,
     onRestart,
     words,
     currentWordsIndex,

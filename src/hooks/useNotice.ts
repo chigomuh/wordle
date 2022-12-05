@@ -1,33 +1,29 @@
-import { useState } from "react";
+import { addNotice, deleteNotice, initNotice } from "@/store/modules/notice";
+import { useCallback } from "react";
+import { useAppDispatch, useAppSelector } from ".";
 
-interface Option {
-  isPopup?: boolean;
-  duration?: number;
-}
+const useNotice = () => {
+  const notice = useAppSelector(({ notice: { notice } }) => notice);
+  const dispatch = useAppDispatch();
 
-const useNotice = (initArr: string[] = []) => {
-  const [notice, setNotice] = useState<string[]>(initArr);
+  const addNoticeAndTimeoutPopWithDelay = useCallback(
+    (notice: string, delay = 1000) => {
+      dispatch(addNotice(notice));
 
-  const addNotice = (notice: string, option?: Option) => {
-    const { isPopup = true, duration = 1000 } = option ?? {};
+      const timeout = setTimeout(() => {
+        dispatch(deleteNotice());
+      }, delay);
 
-    setNotice((prev) => [notice, ...prev]);
+      return () => clearTimeout(timeout);
+    },
+    [dispatch]
+  );
 
-    if (!isPopup) return;
+  const resetNotice = useCallback(() => {
+    dispatch(initNotice());
+  }, [dispatch]);
 
-    const timeoutId = setTimeout(() => {
-      setNotice((prev) => {
-        prev.pop();
-        return [...prev];
-      });
-    }, duration);
-
-    return () => clearTimeout(timeoutId);
-  };
-
-  console.log("notice", notice);
-
-  return { notice, setNotice, addNotice };
+  return { notice, addNoticeAndTimeoutPopWithDelay, resetNotice };
 };
 
 export default useNotice;
